@@ -1,1 +1,1606 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PDF Converter – OCR / Non-OCR, Merger, Compressor & Editor</title>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{margin:0;padding:0;max-width:100%;overflow-x:hidden;background:#f2f5f9;font-family:Arial,sans-serif;color:#243247}
 
+/* Top Website Header Bar */
+.site-header{position:sticky;top:0;z-index:900;background:#163856;color:#fff;box-shadow:0 2px 10px #0f243830}
+.header-inner{max-width:1160px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.brand{font-size:18px;font-weight:bold;color:#fff;text-decoration:none;letter-spacing:.2px}
+.nav-menu{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nav-link,.dropbtn{color:#e6eef7;text-decoration:none;font-size:14px;font-weight:bold;padding:7px 12px;border-radius:6px;transition:background .15s;background:transparent;border:0;cursor:pointer;font-family:Arial,sans-serif}
+.nav-link:hover,.nav-link.active,.dropbtn:hover,.dropdown.open .dropbtn{background:#255885;color:#fff}
+.nav-link.muted-menu{opacity:.82;font-weight:normal}
+
+/* Dropdown Menu */
+.dropdown{position:relative}
+.dropdown-menu{display:none;position:absolute;top:100%;left:0;min-width:215px;background:#fff;color:#243247;border-radius:8px;box-shadow:0 8px 24px #0f243838;border:1px solid #d7dee8;padding:6px;z-index:950;margin-top:4px}
+.dropdown.open .dropdown-menu,.dropdown:hover .dropdown-menu{display:block}
+.dropdown-item{display:block;width:100%;text-align:left;padding:9px 12px;border-radius:6px;text-decoration:none;color:#243247;font-size:13px;font-weight:bold;background:transparent;border:0;cursor:pointer}
+.dropdown-item:hover{background:#eef4fb;color:#1f4e78}
+
+/* Main Workspace Layout with Left Sidebar */
+main#top{max-width:1160px;margin:24px auto;padding:0 16px;scroll-margin-top:76px}
+.pdf-workspace-shell{display:grid;grid-template-columns:235px minmax(0,1fr);gap:20px;align-items:start}
+.left-sidebar{position:sticky;top:74px;background:#fff;border-radius:12px;padding:14px;box-shadow:0 3px 14px #1a355018;border:1px solid #e2e8f0}
+.sidebar-title{font-size:13px;font-weight:bold;text-transform:uppercase;letter-spacing:.4px;color:#1f4e78;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid #e2e8f0}
+.side-group-label{font-size:11px;font-weight:bold;text-transform:uppercase;color:#64748b;margin:10px 0 4px 8px;letter-spacing:.3px}
+.side-nav-list{display:flex;flex-direction:column;gap:4px}
+.side-link{display:block;width:100%;text-align:left;background:transparent;color:#243247;font-weight:bold;font-size:13px;padding:8px 11px;border-radius:7px;text-decoration:none;cursor:pointer;transition:background .15s,color .15s}
+.side-link:hover{background:#eef4fb;color:#1f4e78}
+.side-link.active{background:#1f4e78;color:#fff}
+.sidebar-divider{height:1px;background:#e2e8f0;margin:10px 0}
+.side-mode-btn{width:100%;font-size:12px;padding:8px 10px;background:#475569}
+
+.pdf-content-col{min-width:0}
+.card{background:#fff;padding:24px;border-radius:12px;margin-bottom:18px;box-shadow:0 3px 14px #1a355018;overflow:hidden;scroll-margin-top:76px}
+h1,h2{text-align:center;color:#1f4e78;margin-top:0}
+h1{font-size:25px}
+h2{font-size:20px}
+label{display:block;font-weight:bold;margin:14px 0 7px}
+input[type=file],input[type=text],input[type=number],select{width:100%;max-width:100%;padding:11px;border:1px solid #ccd5e0;border-radius:7px;background:#fff}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.grid > div,.grid-3 > div{min-width:0}
+.radios{display:flex;gap:20px;flex-wrap:wrap}
+.radios label{font-weight:normal;display:flex;gap:7px;align-items:center;margin:6px 0}
+button{padding:12px 18px;border:0;border-radius:7px;background:#1f4e78;color:#fff;font-weight:bold;cursor:pointer;max-width:100%}
+button:disabled{opacity:.5;cursor:not-allowed}
+button.secondary{background:#475569}
+button.danger{background:#b91c1c}
+button.small{padding:7px 11px;font-size:12px}
+.actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+#status,#preview{padding:12px;background:#eef4fb;border-radius:7px;white-space:pre-wrap;overflow:auto;word-break:break-word}
+#preview{max-height:320px;background:#fafafa;border:1px solid #d7dee8}
+.note{font-size:13px;line-height:1.5;color:#596779}
+.info-banner{background:#eef4fb;border-left:4px solid #1f4e78;padding:11px 14px;border-radius:7px;font-size:13px;line-height:1.5;margin-top:12px}
+.warning{background:#fff7e8;padding:12px;border-radius:7px;font-size:13px;line-height:1.5}
+progress{width:100%;margin-top:12px}
+
+@media(max-width:860px){
+ .pdf-workspace-shell{grid-template-columns:1fr}
+ .left-sidebar{position:static}
+ .side-nav-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+}
+@media(max-width:650px){.grid,.grid-3{grid-template-columns:1fr}.card{padding:17px}}
+
+.size-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+@media(max-width:650px){.size-summary{grid-template-columns:1fr}}
+.size-box{border:1px solid #d7dee8;border-radius:8px;padding:12px;background:#f8fafc}
+.size-box .lbl{font-size:12px;color:#596779;margin-bottom:4px}
+.size-box .val{font-size:16px;font-weight:bold;color:#1f4e78}
+
+.thumb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px;margin-top:16px}
+.page-thumb{border:1px solid #d7dee8;border-radius:8px;padding:9px;background:#fbfcfe;min-width:0}
+.page-thumb canvas{width:100%;height:auto;border:1px solid #d8dee8;background:#fff;display:block}
+.page-thumb .actions{gap:5px;margin-top:8px}
+.page-thumb button{font-size:11px;padding:7px 9px}
+.page-thumb .page-meta{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;margin-bottom:7px}
+.page-thumb input{width:auto}
+
+.preview-modal{position:fixed;inset:0;background:#0009;z-index:10000;display:flex;align-items:center;justify-content:center;padding:18px}
+.preview-dialog{background:#fff;border-radius:10px;padding:18px;max-width:92vw;max-height:92vh;overflow:auto;width:100%}
+.confirm-dialog{max-width:520px}
+.preview-dialog canvas{display:block;max-width:85vw;max-height:78vh;width:auto;height:auto;margin:12px auto;border:1px solid #d8dee8;background:#fff}
+
+.hidden{display:none !important}
+.edit-box{border:1px solid #e2e8f0;border-radius:8px;padding:14px;background:#f8fafc;margin-top:12px}
+.merge-list{margin:12px 0 0;padding:0;list-style:none}
+.merge-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px;border:1px solid #d7dee8;border-radius:7px;background:#fff;margin-bottom:8px;font-size:13px;flex-wrap:wrap}
+.merge-btns{display:flex;gap:6px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header class="site-header" aria-label="Primary website navigation">
+ <div class="header-inner">
+  <a href="#top" class="brand" id="homeNavLink">My Web Suite</a>
+  <nav class="nav-menu" aria-label="Main menu">
+   <a href="#pdf-processing-page" class="nav-link active" id="pdfProcessingNavLink">PDF Processing</a>
+   <div class="dropdown" id="toPdfDropdown">
+    <button type="button" class="dropbtn" id="toPdfDropBtn" aria-expanded="false" aria-haspopup="true">To PDF ▾</button>
+    <div class="dropdown-menu" role="menu" aria-label="To PDF options">
+     <a href="#excelToPdfSection" class="dropdown-item" data-jump-section="excelToPdfSection">Excel to PDF</a>
+     <a href="#wordToPdfSection" class="dropdown-item" data-jump-section="wordToPdfSection">Word to PDF</a>
+     <a href="#imageToPdfSection" class="dropdown-item" data-jump-section="imageToPdfSection">Image to PDF</a>
+     <button type="button" class="dropdown-item" id="menuPdfToPlainTextBtn">PDF to Plain Text</button>
+    </div>
+   </div>
+   <a href="#convertPdfSection" class="nav-link">Convert PDF</a>
+   <a href="#splitPdfSection" class="nav-link">Split PDF</a>
+   <a href="#mergePdfSection" class="nav-link">Merge PDF</a>
+   <a href="#compressPdfSection" class="nav-link">Compress PDF</a>
+   <a href="#editPdfSection" class="nav-link">Edit PDF</a>
+   <a href="#future-tools-note" class="nav-link muted-menu">More Menus</a>
+  </nav>
+ </div>
+</header>
+
+<main id="top">
+ <div class="pdf-workspace-shell" id="pdf-processing-page">
+  <aside class="left-sidebar" aria-label="PDF processing options">
+   <p class="sidebar-title">PDF Processing</p>
+   <nav class="side-nav-list" id="pdfSideMenu">
+    <a href="#convertPdfSection" class="side-link active" data-section="convertPdfSection">Convert PDF</a>
+    <a href="#splitPdfSection" class="side-link" data-section="splitPdfSection">Split PDF</a>
+    <a href="#mergePdfSection" class="side-link" data-section="mergePdfSection">Merge PDF</a>
+    <a href="#deletePagesSection" class="side-link" data-section="deletePagesSection">Delete PDF Pages</a>
+    <a href="#rotatePdfSection" class="side-link" data-section="rotatePdfSection">Rotate PDF</a>
+    <a href="#compressPdfSection" class="side-link" data-section="compressPdfSection">Compress PDF</a>
+    <a href="#editPdfSection" class="side-link" data-section="editPdfSection">Edit PDF</a>
+    <a href="#pagePreviewSection" class="side-link" data-section="pagePreviewSection">Page Preview &amp; Order</a>
+    <a href="#future-tools-note" class="side-link" data-section="future-tools-note">Extracted Text Preview</a>
+    <div class="side-group-label">To PDF</div>
+    <a href="#excelToPdfSection" class="side-link" data-section="excelToPdfSection">Excel to PDF</a>
+    <a href="#wordToPdfSection" class="side-link" data-section="wordToPdfSection">Word to PDF</a>
+    <a href="#imageToPdfSection" class="side-link" data-section="imageToPdfSection">Image to PDF</a>
+   </nav>
+   <div class="sidebar-divider"></div>
+   <button type="button" id="toggleViewModeBtn" class="side-mode-btn">FOCUS ACTIVE TOOL ONLY</button>
+  </aside>
+
+  <div class="pdf-content-col">
+   <!-- 1. CONVERT PDF -->
+   <section class="card pdf-tool-panel" id="convertPdfSection">
+    <h1>Convert PDF (Excel / Word / Text / JPEG)</h1>
+    <p class="note" style="text-align:center">Convert searchable PDFs or scanned PDFs with optional OCR.</p>
+    <label for="pdfFile">1. Select PDF file</label>
+    <input id="pdfFile" type="file" accept=".pdf,application/pdf">
+    <div class="grid">
+     <div><label for="format">2. Output format</label><select id="format"><option value="xlsx">Excel (.xlsx)</option><option value="docx">Word (.docx)</option><option value="txt">Plain Text (.txt)</option><option value="jpeg">JPEG images (.jpg)</option></select></div>
+     <div><label for="lang">OCR language</label><select id="lang"><option value="eng">English</option><option value="tel">Telugu</option><option value="eng+tel">English + Telugu</option><option value="hin">Hindi</option><option value="tam">Tamil</option><option value="kan">Kannada</option><option value="urd">Urdu</option></select></div>
+    </div>
+    <label>3. Conversion mode</label>
+    <div class="radios">
+     <label><input type="radio" name="mode" value="text" checked> Without OCR (embedded/searchable text)</label>
+     <label><input type="radio" name="mode" value="ocr"> With OCR (scanned/image PDF)</label>
+    </div>
+    <p class="note">JPEG output renders each PDF page as an image; OCR is not required for JPEG conversion.</p>
+    <div id="plainTextNotice" class="info-banner hidden">
+     <strong>Plain Text (.txt) Note:</strong> Images, charts, drawings, and visual formatting are <strong>not shown</strong> in plain text. You will be asked to confirm before plain-text conversion runs.
+    </div>
+    <div class="actions">
+     <button id="convert" type="button" disabled>CONVERT PDF</button>
+     <button id="saveTxtBtn" type="button" class="secondary" disabled>SAVE EXTRACTED .TXT</button>
+     <button id="reset" type="button" style="background:#64748b">RESET</button>
+    </div>
+    <progress id="progress" value="0" max="100" class="hidden"></progress>
+    <p id="status">Select a PDF file to begin.</p>
+   </section>
+
+   <!-- TO PDF: EXCEL TO PDF -->
+   <section class="card pdf-tool-panel" id="excelToPdfSection">
+    <h2>Excel to PDF</h2>
+    <p class="note">Select an Excel (<code>.xlsx</code>, <code>.xls</code>) or <code>.csv</code> spreadsheet and export its rows and columns into a downloadable PDF.</p>
+    <label for="excelToPdfFile">Select Excel or CSV file</label>
+    <input id="excelToPdfFile" type="file" accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv">
+    <div class="actions">
+     <button type="button" id="excelToPdfBtn" disabled>CONVERT EXCEL TO PDF</button>
+    </div>
+    <progress id="excelToPdfProgress" value="0" max="100" class="hidden"></progress>
+    <div id="excelToPdfStatus" class="note" style="margin-top:12px">Select an Excel or CSV file to begin.</div>
+   </section>
+
+   <!-- TO PDF: WORD TO PDF -->
+   <section class="card pdf-tool-panel" id="wordToPdfSection">
+    <h2>Word to PDF</h2>
+    <p class="note">Select a Word document (<code>.docx</code>) to extract its paragraphs into a downloadable PDF. (Embedded images and complex Word layouts are not included in this text-to-PDF conversion.)</p>
+    <label for="wordToPdfFile">Select Word (.docx) file</label>
+    <input id="wordToPdfFile" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+    <div class="actions">
+     <button type="button" id="wordToPdfBtn" disabled>CONVERT WORD TO PDF</button>
+    </div>
+    <progress id="wordToPdfProgress" value="0" max="100" class="hidden"></progress>
+    <div id="wordToPdfStatus" class="note" style="margin-top:12px">Select a .docx file to begin.</div>
+   </section>
+
+   <!-- TO PDF: IMAGE TO PDF -->
+   <section class="card pdf-tool-panel" id="imageToPdfSection">
+    <h2>Image to PDF</h2>
+    <p class="note">Select one or more image files (<code>.jpg</code>, <code>.jpeg</code>, <code>.png</code>, <code>.webp</code>) in order and combine them into a single PDF.</p>
+    <label for="imageToPdfFiles">Select image files</label>
+    <input id="imageToPdfFiles" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" multiple>
+    <div class="actions">
+     <button type="button" id="imageToPdfBtn" disabled>CONVERT IMAGES TO PDF</button>
+    </div>
+    <progress id="imageToPdfProgress" value="0" max="100" class="hidden"></progress>
+    <div id="imageToPdfStatus" class="note" style="margin-top:12px">Select one or more images to begin.</div>
+   </section>
+
+   <!-- 2. SPLIT PDF -->
+   <section class="card pdf-tool-panel" id="splitPdfSection">
+    <h2>Split PDF</h2>
+    <p class="note">Load pages in <strong>Page Preview &amp; Order</strong> (or select a PDF above) and extract specific page numbers or a page range.</p>
+    <div class="grid">
+     <div>
+      <label for="pageNumbers">Split option 1 – Working page positions</label>
+      <input id="pageNumbers" type="text" placeholder="Example: 1, 3, 5, 8-10">
+      <p class="note">Enter current working order positions separated by commas or ranges, e.g. 2, 4-6, 9.</p>
+      <button type="button" id="splitSelectedBtn">SPLIT SELECTED PAGE NUMBERS</button>
+     </div>
+     <div>
+      <label>Split option 2 – Working page range</label>
+      <div class="grid">
+       <div><input id="rangeFrom" type="number" min="1" placeholder="From page"></div>
+       <div><input id="rangeTo" type="number" min="1" placeholder="To page"></div>
+      </div>
+      <p class="note">Example: From page 3 to page 8 (based on current working order).</p>
+      <button type="button" id="splitRangeBtn">SPLIT PAGE RANGE</button>
+     </div>
+    </div>
+    <div id="splitStatus" class="note" style="margin-top:12px">Ready to split PDF pages.</div>
+   </section>
+
+   <!-- 3. MERGE PDF -->
+   <section class="card pdf-tool-panel" id="mergePdfSection">
+    <h2>Merge PDF</h2>
+    <p class="note">Select two or more PDF files in the order you want them combined, adjust their order if needed, and download a single merged PDF.</p>
+    <label for="mergeFiles">Select PDF files to merge</label>
+    <input id="mergeFiles" type="file" accept=".pdf,application/pdf" multiple>
+    <ul id="mergeQueue" class="merge-list"></ul>
+    <div class="actions">
+     <button type="button" id="mergePdfsBtn" disabled>MERGE &amp; DOWNLOAD PDF</button>
+     <button type="button" id="clearMergeBtn" class="secondary" disabled>CLEAR MERGE LIST</button>
+    </div>
+    <div id="mergeStatus" class="note" style="margin-top:12px">No extra merge PDFs queued yet.</div>
+   </section>
+
+   <!-- 4. DELETE PDF PAGES -->
+   <section class="card pdf-tool-panel" id="deletePagesSection">
+    <h2>Delete PDF Pages</h2>
+    <p class="note">Use checkboxes in <strong>Page Preview &amp; Order</strong> to mark pages with <strong>Keep</strong>, then retain or remove selected pages and download the result.</p>
+    <div class="actions">
+     <button type="button" id="keepSelectedBtn">KEEP SELECTED PAGES</button>
+     <button type="button" id="deleteSelectedBtn" class="secondary">DELETE SELECTED PAGES</button>
+     <button type="button" id="downloadReorderedBtn">DOWNLOAD PROCESSED PDF</button>
+    </div>
+    <div id="deletePagesStatus" class="note" style="margin-top:12px">Load PDF pages to select or delete specific pages.</div>
+   </section>
+
+   <!-- 5. ROTATE PDF -->
+   <section class="card pdf-tool-panel" id="rotatePdfSection">
+    <h2>Rotate PDF</h2>
+    <p class="note">Rotate all working pages, checked pages, or specific working page numbers and download the updated PDF.</p>
+    <div class="grid-3">
+     <div>
+      <label for="rotateScope" style="margin-top:4px">Target pages</label>
+      <select id="rotateScope">
+       <option value="all">All working pages</option>
+       <option value="selected">Checked ("Keep") pages only</option>
+       <option value="specific">Specific working page numbers</option>
+      </select>
+     </div>
+     <div>
+      <label for="rotatePagesInput" style="margin-top:4px">Page numbers (if Specific)</label>
+      <input id="rotatePagesInput" type="text" placeholder="e.g. 1, 3-4">
+     </div>
+     <div>
+      <label for="rotateAngle" style="margin-top:4px">Rotation</label>
+      <select id="rotateAngle">
+       <option value="90">90° Clockwise</option>
+       <option value="180">180°</option>
+       <option value="270">270° Clockwise (90° Counter-Clockwise)</option>
+      </select>
+     </div>
+    </div>
+    <div class="actions" style="margin-top:12px">
+     <button type="button" id="applyRotateBtn" class="secondary">APPLY ROTATION &amp; DOWNLOAD PDF</button>
+    </div>
+    <div id="rotateStatus" class="note" style="margin-top:12px">Ready to rotate pages.</div>
+   </section>
+
+   <!-- 6. COMPRESS PDF -->
+   <section class="card pdf-tool-panel" id="compressPdfSection">
+    <h2>Compress PDF by Percentage</h2>
+    <p class="note">Enter a target reduction percentage (e.g. <strong>30</strong> to reduce size by ~30%) to see the estimated target file size before compressing.</p>
+    <div class="grid">
+     <div>
+      <label for="compressPercent">Target size reduction (%)</label>
+      <input id="compressPercent" type="number" min="5" max="90" step="1" value="30" placeholder="Example: 30">
+     </div>
+     <div>
+      <label for="compressQualityMode">Compression balance</label>
+      <select id="compressQualityMode">
+       <option value="balanced">Balanced (clarity + size reduction)</option>
+       <option value="compact">Smaller size (lower resolution/quality)</option>
+       <option value="sharp">Higher clarity (higher resolution)</option>
+      </select>
+     </div>
+    </div>
+    <div class="size-summary">
+     <div class="size-box">
+      <div class="lbl">Original PDF Size</div>
+      <div class="val" id="origSizeDisplay">–</div>
+     </div>
+     <div class="size-box">
+      <div class="lbl">Estimated Size After Compression</div>
+      <div class="val" id="estSizeDisplay">–</div>
+     </div>
+     <div class="size-box">
+      <div class="lbl">Actual Compressed Size</div>
+      <div class="val" id="actualSizeDisplay">–</div>
+     </div>
+    </div>
+    <div class="actions">
+     <button type="button" id="compressPdfBtn" disabled>COMPRESS &amp; DOWNLOAD PDF</button>
+    </div>
+    <progress id="compressProgress" value="0" max="100" class="hidden"></progress>
+    <div id="compressStatus" class="note" style="margin-top:12px">Select a PDF file at the top to calculate target size.</div>
+   </section>
+
+   <!-- 7. EDIT PDF -->
+   <section class="card pdf-tool-panel" id="editPdfSection">
+    <h2>Edit PDF – Watermark, Page Numbers &amp; Blank Pages</h2>
+    <p class="note">Applies edits to the currently loaded working pages (or loads the selected PDF automatically if not loaded yet) and downloads a new PDF.</p>
+
+    <div class="edit-box">
+     <label style="margin-top:0">Add Text Stamp / Watermark / Header / Footer</label>
+     <div class="grid-3">
+      <div>
+       <label for="stampText" style="margin-top:4px">Stamp text (Latin characters)</label>
+       <input id="stampText" type="text" placeholder="e.g. DRAFT / CONFIDENTIAL">
+      </div>
+      <div>
+       <label for="stampPosition" style="margin-top:4px">Position</label>
+       <select id="stampPosition">
+        <option value="center">Center Watermark (diagonal/faint)</option>
+        <option value="top-left">Top Left Header</option>
+        <option value="top-right">Top Right Header</option>
+        <option value="bottom-left">Bottom Left Footer</option>
+        <option value="bottom-right">Bottom Right Footer</option>
+       </select>
+      </div>
+      <div>
+       <label for="stampSize" style="margin-top:4px">Font size (pt)</label>
+       <input id="stampSize" type="number" min="6" max="120" value="14">
+      </div>
+     </div>
+     <div class="actions" style="margin-top:12px">
+      <button type="button" id="applyStampBtn">ADD TEXT &amp; DOWNLOAD PDF</button>
+     </div>
+    </div>
+
+    <div class="edit-box">
+     <label style="margin-top:0">Add Page Numbers or Insert Blank Page</label>
+     <div class="grid">
+      <div>
+       <label for="pageNumPos" style="margin-top:4px">Page numbering position</label>
+       <div class="grid">
+        <select id="pageNumPos">
+         <option value="bottom-center">Bottom Center</option>
+         <option value="bottom-right">Bottom Right</option>
+         <option value="bottom-left">Bottom Left</option>
+         <option value="top-right">Top Right</option>
+        </select>
+        <button type="button" id="addPageNumbersBtn" class="secondary">ADD PAGE NUMBERS &amp; DOWNLOAD</button>
+       </div>
+      </div>
+      <div>
+       <label for="blankAfterPage" style="margin-top:4px">Insert blank page after working page # (0 = at start)</label>
+       <div class="grid">
+        <input id="blankAfterPage" type="number" min="0" value="0" placeholder="0 for start">
+        <button type="button" id="insertBlankBtn" class="secondary">INSERT BLANK PAGE &amp; DOWNLOAD</button>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div id="editPdfStatus" class="note" style="margin-top:12px">Ready for PDF edits.</div>
+   </section>
+
+   <!-- 8. PAGE PREVIEW & ORDER -->
+   <section class="card pdf-tool-panel" id="pagePreviewSection">
+    <h2>Page Preview &amp; Order</h2>
+    <p class="note">Select a PDF above, then load its pages here. Use <strong>↑</strong> / <strong>↓</strong> to reorder pages, check/uncheck <strong>Keep</strong>, or click <strong>PREVIEW</strong> for a larger view.</p>
+    <div class="actions">
+     <button type="button" id="loadPagesBtn" class="secondary">LOAD PDF PAGES FOR PREVIEW</button>
+    </div>
+    <div id="pageManagerStatus" class="note" style="margin-top:12px">No PDF pages loaded yet.</div>
+    <div id="pageThumbs" class="thumb-grid"></div>
+   </section>
+
+   <!-- 9. EXTRACTED TEXT PREVIEW -->
+   <section class="card pdf-tool-panel" id="future-tools-note">
+    <h2>Extracted Text Preview</h2>
+    <div id="preview">Extracted text will appear here.</div>
+    <div class="actions" style="margin-top:12px">
+     <button type="button" id="copyTextBtn" class="secondary" disabled>COPY EXTRACTED TEXT</button>
+     <button type="button" id="downloadPreviewTxtBtn" class="secondary" disabled>DOWNLOAD PREVIEW AS .TXT</button>
+    </div>
+    <p class="note" style="margin-top:14px"><b>Website Menu Tip:</b> Add new top header links in <code>&lt;nav class="nav-menu"&gt;</code> and left sidebar links in <code>#pdfSideMenu</code> as your website grows.</p>
+    <p class="warning"><b>Important:</b> Excel output captures extracted text as rows; it may not reproduce complex table layouts exactly. OCR accuracy depends on scan quality and language. Plain text (<code>.txt</code>) does not include images or visual layouts. Percentage compression re-renders pages to JPEG inside a new PDF, which reduces scanned/image PDFs well but may alter text selection or actual file size on text-heavy PDFs. Libraries load from CDNs, so an internet connection is required. The PDF is processed in your browser and is not uploaded to this webpage's server.</p>
+   </section>
+  </div>
+ </div>
+</main>
+
+<!-- Plain Text Image Notice Confirmation Modal -->
+<div id="plainTextConfirmModal" class="preview-modal hidden" role="dialog" aria-modal="true" aria-labelledby="plainTextConfirmTitle">
+ <div class="preview-dialog confirm-dialog">
+  <h2 id="plainTextConfirmTitle" style="text-align:left;margin-bottom:8px">Plain Text Conversion Notice</h2>
+  <p class="note" style="color:#243247;font-size:14px">
+   Please note that <strong>images, photos, charts, diagrams, and visual layouts are not shown in plain text (.txt)</strong>. Only extracted text characters will be included.
+  </p>
+  <p class="note">Do you accept this and want to proceed with converting to Plain Text, or reject/cancel?</p>
+  <div class="actions" style="justify-content:flex-end;margin-top:16px">
+   <button type="button" id="rejectPlainTextBtn" class="danger">REJECT / CANCEL</button>
+   <button type="button" id="acceptPlainTextBtn">OK, PROCEED TO .TXT</button>
+  </div>
+ </div>
+</div>
+
+<!-- Page Preview Modal -->
+<div id="pagePreviewModal" class="preview-modal hidden" role="dialog" aria-modal="true" aria-labelledby="previewPageTitle">
+ <div class="preview-dialog">
+  <div class="actions" style="justify-content:space-between;margin-top:0">
+   <strong id="previewPageTitle">Page preview</strong>
+   <button type="button" id="closePreviewBtn" class="secondary">CLOSE</button>
+  </div>
+  <canvas id="largePagePreview" aria-label="PDF page preview"></canvas>
+ </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+
+function closePreviewModal(){
+ const modal=$("pagePreviewModal");
+ if(modal) modal.classList.add("hidden");
+}
+
+if($("closePreviewBtn")) $("closePreviewBtn").addEventListener("click",closePreviewModal);
+if($("pagePreviewModal")) $("pagePreviewModal").addEventListener("click",e=>{
+ if(e.target===$("pagePreviewModal")) closePreviewModal();
+});
+
+// Plain Text confirmation modal state
+let plainTextConfirmResolver=null;
+function closePlainTextModal(accepted){
+ const modal=$("plainTextConfirmModal");
+ if(modal) modal.classList.add("hidden");
+ if(plainTextConfirmResolver){
+  const resolve=plainTextConfirmResolver;
+  plainTextConfirmResolver=null;
+  resolve(Boolean(accepted));
+ }
+}
+
+function askPlainTextConfirmation(){
+ return new Promise(resolve=>{
+  plainTextConfirmResolver=resolve;
+  $("plainTextConfirmModal").classList.remove("hidden");
+ });
+}
+
+if($("acceptPlainTextBtn")) $("acceptPlainTextBtn").addEventListener("click",()=>closePlainTextModal(true));
+if($("rejectPlainTextBtn")) $("rejectPlainTextBtn").addEventListener("click",()=>closePlainTextModal(false));
+if($("plainTextConfirmModal")) $("plainTextConfirmModal").addEventListener("click",e=>{
+ if(e.target===$("plainTextConfirmModal")) closePlainTextModal(false);
+});
+
+document.addEventListener("keydown",e=>{
+ if(e.key==="Escape"){
+  closePreviewModal();
+  if(plainTextConfirmResolver) closePlainTextModal(false);
+ }
+});
+
+// Header dropdown toggle & outside click handling
+const toPdfDropdown=$("toPdfDropdown");
+const toPdfDropBtn=$("toPdfDropBtn");
+if(toPdfDropBtn && toPdfDropdown){
+ toPdfDropBtn.addEventListener("click",e=>{
+  e.stopPropagation();
+  const isOpen=toPdfDropdown.classList.toggle("open");
+  toPdfDropBtn.setAttribute("aria-expanded",String(isOpen));
+ });
+ document.addEventListener("click",e=>{
+  if(!toPdfDropdown.contains(e.target)){
+   toPdfDropdown.classList.remove("open");
+   toPdfDropBtn.setAttribute("aria-expanded","false");
+  }
+ });
+}
+
+// Left sidebar navigation & focused/all view toggle
+let focusedSectionId=null;
+
+function setActiveSideLink(sectionId){
+ document.querySelectorAll(".side-link").forEach(a=>{
+  a.classList.toggle("active",a.dataset.section===sectionId);
+ });
+}
+
+function applyPanelVisibility(){
+ const panels=[...document.querySelectorAll(".pdf-tool-panel")];
+ if(!focusedSectionId){
+  panels.forEach(p=>p.classList.remove("hidden"));
+  $("toggleViewModeBtn").textContent="FOCUS ACTIVE TOOL ONLY";
+  return;
+ }
+ panels.forEach(p=>{
+  const show=p.id===focusedSectionId || p.id==="convertPdfSection";
+  p.classList.toggle("hidden",!show);
+ });
+ $("toggleViewModeBtn").textContent="SHOW ALL PDF TOOLS";
+}
+
+function navigateToSection(sectionId){
+ setActiveSideLink(sectionId);
+ if(focusedSectionId){
+  focusedSectionId=sectionId;
+  applyPanelVisibility();
+ }
+ const el=$(sectionId);
+ if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+ if(toPdfDropdown && toPdfDropBtn){
+  toPdfDropdown.classList.remove("open");
+  toPdfDropBtn.setAttribute("aria-expanded","false");
+ }
+}
+
+document.querySelectorAll(".side-link").forEach(link=>{
+ link.addEventListener("click",()=>{
+  const targetId=link.dataset.section;
+  setActiveSideLink(targetId);
+  if(focusedSectionId){
+   focusedSectionId=targetId;
+   applyPanelVisibility();
+  }
+ });
+});
+
+document.querySelectorAll("[data-jump-section]").forEach(item=>{
+ item.addEventListener("click",e=>{
+  e.preventDefault();
+  navigateToSection(item.dataset.jumpSection);
+ });
+});
+
+if($("menuPdfToPlainTextBtn")){
+ $("menuPdfToPlainTextBtn").addEventListener("click",()=>{
+  $("format").value="txt";
+  updatePlainTextNotice();
+  navigateToSection("convertPdfSection");
+  $("status").textContent="Selected PDF to Plain Text (.txt) — images are not shown in plain text. Choose a PDF and click CONVERT PDF.";
+ });
+}
+
+$("toggleViewModeBtn").addEventListener("click",()=>{
+ if(focusedSectionId){
+  focusedSectionId=null;
+ }else{
+  const current=document.querySelector(".side-link.active");
+  focusedSectionId=current?current.dataset.section:"convertPdfSection";
+ }
+ applyPanelVisibility();
+});
+
+$("pdfProcessingNavLink").addEventListener("click",()=>{
+ focusedSectionId=null;
+ applyPanelVisibility();
+ setActiveSideLink("convertPdfSection");
+});
+
+function updatePlainTextNotice(){
+ const isTxt=$("format").value==="txt";
+ $("plainTextNotice").classList.toggle("hidden",!isTxt);
+}
+$("format").addEventListener("change",updatePlainTextNotice);
+updatePlainTextNotice();
+
+function configurePdfWorker(){
+ if(window.pdfjsLib && pdfjsLib.GlobalWorkerOptions){
+  pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+ }
+}
+configurePdfWorker();
+
+function loadScriptFallback(urls,globalCheck){
+ return new Promise((resolve,reject)=>{
+  if(globalCheck()) return resolve();
+  let idx=0;
+  function tryNext(){
+   if(idx>=urls.length) return reject(new Error("Could not load library from CDN: "+urls[0]));
+   const s=document.createElement("script");
+   s.src=urls[idx++];
+   s.async=true;
+   s.onload=()=>globalCheck()?resolve():tryNext();
+   s.onerror=tryNext;
+   document.head.appendChild(s);
+  }
+  tryNext();
+ });
+}
+
+async function ensureConversionLibs(fmt,mode){
+ await loadScriptFallback([
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js",
+  "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"
+ ],()=>Boolean(window.pdfjsLib));
+ configurePdfWorker();
+
+ if(mode==="ocr"){
+  await loadScriptFallback([
+   "https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js",
+   "https://unpkg.com/tesseract.js@5.0.4/dist/tesseract.min.js"
+  ],()=>Boolean(window.Tesseract));
+ }
+ if(fmt==="xlsx"){
+  await loadScriptFallback([
+   "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js",
+   "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+  ],()=>Boolean(window.XLSX));
+ }
+ if(fmt==="docx"){
+  await loadScriptFallback([
+   "https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js",
+   "https://unpkg.com/docx@8.5.0/build/index.umd.min.js"
+  ],()=>Boolean(window.docx));
+ }
+}
+
+async function ensurePdfLib(){
+ await loadScriptFallback([
+  "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js",
+  "https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"
+ ],()=>Boolean(window.PDFLib));
+}
+
+async function ensureSheetJs(){
+ await loadScriptFallback([
+  "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+ ],()=>Boolean(window.XLSX));
+}
+
+let file=null;
+let lastExtractedText="";
+let lastSourceBaseName="converted_pdf";
+
+let pdfJsDoc=null;
+let pageManagerPdfBytes=null;
+let pageManagerPages=[];
+let pageManagerRotations={};
+let pageManagerSelected=new Set();
+let mergeQueue=[];
+
+function formatBytes(bytes){
+ if(typeof bytes!=="number"||Number.isNaN(bytes)||bytes<0) return "–";
+ if(bytes<1024) return `${bytes} B`;
+ const kb=bytes/1024;
+ if(kb<1024) return `${kb.toFixed(1)} KB`;
+ return `${(kb/1024).toFixed(2)} MB`;
+}
+
+function updateCompressionSizePreview(){
+ if(!file){
+  $("origSizeDisplay").textContent="–";
+  $("estSizeDisplay").textContent="–";
+  $("actualSizeDisplay").textContent="–";
+  $("compressPdfBtn").disabled=true;
+  $("compressStatus").textContent="Select a PDF file at the top to calculate target size.";
+  return;
+ }
+ $("compressPdfBtn").disabled=false;
+ const origBytes=file.size;
+ $("origSizeDisplay").textContent=formatBytes(origBytes);
+ const pct=Number($("compressPercent").value);
+ if(Number.isNaN(pct)||pct<5||pct>90){
+  $("estSizeDisplay").textContent="Enter 5–90%";
+  $("compressStatus").textContent="Enter a compression percentage between 5% and 90%.";
+  return;
+ }
+ const targetBytes=Math.max(1,Math.round(origBytes*(1-pct/100)));
+ const savedBytes=origBytes-targetBytes;
+ $("estSizeDisplay").textContent=`${formatBytes(targetBytes)} (-${pct}%)`;
+ $("compressStatus").textContent=`Original: ${formatBytes(origBytes)} · Target reduction: ${pct}% (${formatBytes(savedBytes)} saved) · Estimated target size: ${formatBytes(targetBytes)}.`;
+}
+
+$("compressPercent").addEventListener("input",updateCompressionSizePreview);
+
+function status(s,p=0){$("status").textContent=s;$("progress").classList.remove("hidden");$("progress").value=p;}
+function compressStatus(s,p=0){$("compressStatus").textContent=s;$("compressProgress").classList.remove("hidden");$("compressProgress").value=p;}
+function baseName(s){return s.replace(/\.[^.]+$/,"").replace(/[^\w-]+/g,"_")||"converted_file";}
+function saveBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
+function pageManagerMessage(msg){$("pageManagerStatus").textContent=msg;}
+function splitMessage(msg){$("splitStatus").textContent=msg;}
+function deletePagesMessage(msg){$("deletePagesStatus").textContent=msg;}
+function rotateMessage(msg){$("rotateStatus").textContent=msg;}
+function editPdfMessage(msg){$("editPdfStatus").textContent=msg;}
+function mergeMessage(msg){$("mergeStatus").textContent=msg;}
+
+function updateTextActionButtons(){
+ const hasText=Boolean(lastExtractedText.trim());
+ $("saveTxtBtn").disabled=!hasText;
+ $("copyTextBtn").disabled=!hasText;
+ $("downloadPreviewTxtBtn").disabled=!hasText;
+}
+
+function resetPageManagerState(){
+ pageManagerPdfBytes=null;
+ pdfJsDoc=null;
+ pageManagerPages=[];
+ pageManagerRotations={};
+ pageManagerSelected.clear();
+ $("pageThumbs").innerHTML="";
+ $("pageNumbers").value="";
+ $("rangeFrom").value="";
+ $("rangeTo").value="";
+ closePreviewModal();
+ pageManagerMessage("No PDF pages loaded yet.");
+ splitMessage("Ready to split PDF pages.");
+ deletePagesMessage("Load PDF pages to select or delete specific pages.");
+ rotateMessage("Ready to rotate pages.");
+ editPdfMessage("Ready for PDF edits.");
+}
+
+function handleMainFileSelected(selectedFile){
+ file=selectedFile||null;
+ $("convert").disabled=!file;
+ $("actualSizeDisplay").textContent="–";
+ $("compressProgress").classList.add("hidden");
+ $("compressProgress").value=0;
+ $("status").textContent=file?`Selected: ${file.name} (${formatBytes(file.size)})`:"Select a PDF file to begin.";
+ resetPageManagerState();
+ updateCompressionSizePreview();
+}
+
+$("pdfFile").addEventListener("change",e=>handleMainFileSelected(e.target.files[0]||null));
+
+$("reset").addEventListener("click",()=>{
+ lastExtractedText="";
+ lastSourceBaseName="converted_pdf";
+ $("pdfFile").value="";
+ $("progress").classList.add("hidden");
+ $("progress").value=0;
+ $("preview").textContent="Extracted text will appear here.";
+ updateTextActionButtons();
+ handleMainFileSelected(null);
+});
+
+function linesFromPdf(items){
+ const a=items.map(t=>({text:t.str||"",x:t.transform?.[4]||0,y:t.transform?.[5]||0,w:t.width||0})).filter(t=>t.text.trim());
+ a.sort((u,v)=>Math.abs(v.y-u.y)>3?v.y-u.y:u.x-v.x);
+ const lines=[];
+ for(const t of a){
+  let l=lines.find(q=>Math.abs(q.y-t.y)<=3);
+  if(!l){l={y:t.y,items:[]};lines.push(l);}
+  l.items.push(t);
+ }
+ lines.sort((u,v)=>v.y-u.y);
+ return lines.map(l=>{
+  l.items.sort((u,v)=>u.x-v.x);
+  return {text:l.items.map(t=>t.text).join(" ").replace(/\s+/g," ").trim()};
+ }).filter(l=>l.text);
+}
+
+async function textMode(pdf){
+ const out=[];
+ for(let i=1;i<=pdf.numPages;i++){
+  status(`Extracting PDF text: page ${i}/${pdf.numPages}`,Math.round(i/pdf.numPages*90));
+  const p=await pdf.getPage(i),c=await p.getTextContent();
+  out.push({lines:linesFromPdf(c.items)});
+ }
+ return out;
+}
+
+async function ocrMode(pdf,lang){
+ const out=[],worker=await Tesseract.createWorker(lang,1,{logger:m=>{
+  if(m.status==="recognizing text")status("OCR recognition in progress: "+Math.round((m.progress||0)*100)+"%",Math.round((m.progress||0)*100));
+ }});
+ try{
+  for(let i=1;i<=pdf.numPages;i++){
+   status(`Preparing OCR page ${i}/${pdf.numPages}`,Math.round((i-1)/pdf.numPages*90));
+   const p=await pdf.getPage(i),v=p.getViewport({scale:2.2}),canvas=document.createElement("canvas");
+   canvas.width=Math.ceil(v.width);canvas.height=Math.ceil(v.height);
+   await p.render({canvasContext:canvas.getContext("2d"),viewport:v}).promise;
+   const r=await worker.recognize(canvas);
+   out.push({lines:(r.data.lines||[]).map(x=>({text:(x.text||"").trim()})).filter(x=>x.text)});
+   canvas.width=canvas.height=0;
+  }
+ }finally{
+  await worker.terminate();
+ }
+ return out;
+}
+
+function allText(records){return records.map((p,i)=>"PAGE "+(i+1)+"\n"+p.lines.map(x=>x.text).join("\n")).join("\n\n");}
+function saveTextFile(text,base){saveBlob(new Blob(["\uFEFF"+text],{type:"text/plain;charset=utf-8"}),base+".txt");}
+async function toExcel(records,base){const rows=[["Page","Line","Extracted Text"]];records.forEach((p,i)=>p.lines.forEach((l,j)=>rows.push([i+1,j+1,l.text])));const ws=XLSX.utils.aoa_to_sheet(rows);ws["!cols"]=[{wch:10},{wch:10},{wch:100}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Extracted Text");XLSX.writeFile(wb,base+".xlsx");}
+async function toWord(records,base){const {Document,Paragraph,TextRun,Packer,HeadingLevel}=docx,children=[];records.forEach((p,i)=>{children.push(new Paragraph({text:"Page "+(i+1),heading:HeadingLevel.HEADING_2}));p.lines.forEach(l=>children.push(new Paragraph({children:[new TextRun(l.text)]})));});const d=new Document({sections:[{children}]});saveBlob(await Packer.toBlob(d),base+".docx");}
+
+async function toJpeg(pdf,base){
+ for(let i=1;i<=pdf.numPages;i++){
+  status(`Rendering JPEG: page ${i}/${pdf.numPages}`,Math.round(i/pdf.numPages*95));
+  const p=await pdf.getPage(i),v=p.getViewport({scale:2}),c=document.createElement("canvas");
+  c.width=Math.ceil(v.width);c.height=Math.ceil(v.height);
+  await p.render({canvasContext:c.getContext("2d"),viewport:v}).promise;
+  const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",.92));
+  saveBlob(blob,`${base}_page_${String(i).padStart(3,"0")}.jpg`);
+  c.width=c.height=0;
+  await new Promise(r=>setTimeout(r,250));
+ }
+}
+
+async function runTextExtraction(pdf){
+ const mode=document.querySelector('input[name="mode"]:checked').value;
+ return mode==="ocr"?await ocrMode(pdf,$("lang").value):await textMode(pdf);
+}
+
+$("convert").addEventListener("click",async()=>{
+ if(!file)return;
+ const fmt=$("format").value;
+ const mode=document.querySelector('input[name="mode"]:checked').value;
+ if(fmt==="txt"){
+  const confirmed=await askPlainTextConfirmation();
+  if(!confirmed){
+   $("status").textContent="Plain text conversion cancelled by user (images are not shown in plain text).";
+   return;
+  }
+ }
+ $("convert").disabled=true;
+ try{
+  status("Checking conversion libraries...",2);
+  await ensureConversionLibs(fmt,mode);
+  status("Opening PDF...",5);
+  const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
+  const base=baseName(file.name);
+  lastSourceBaseName=base;
+  if(fmt==="jpeg"){
+   await toJpeg(pdf,base);
+   $("preview").textContent=`Rendered ${pdf.numPages} page(s) as JPEG images.`;
+  }else{
+   const records=await runTextExtraction(pdf);
+   const fullText=allText(records);
+   lastExtractedText=fullText;
+   updateTextActionButtons();
+   $("preview").textContent=fullText.slice(0,15000)||"No text found. Try OCR mode for scanned PDFs.";
+   if(fmt==="xlsx")await toExcel(records,base);
+   else if(fmt==="docx")await toWord(records,base);
+   else if(fmt==="txt"){
+    if(!fullText.trim()) throw new Error("No text extracted to save as .txt. Try OCR mode for scanned PDFs.");
+    saveTextFile(fullText,base);
+   }
+  }
+  status("Conversion completed. Check your Downloads folder.",100);
+ }catch(e){console.error(e);$("status").textContent="Conversion failed: "+e.message;}
+ finally{$("convert").disabled=!file;updateTextActionButtons();}
+});
+
+$("saveTxtBtn").addEventListener("click",async()=>{
+ if(!lastExtractedText.trim()){alert("Extract text first by converting a PDF.");return;}
+ const confirmed=await askPlainTextConfirmation();
+ if(!confirmed){
+  $("status").textContent="Plain text download cancelled by user.";
+  return;
+ }
+ saveTextFile(lastExtractedText,lastSourceBaseName);
+ status(`Saved ${lastSourceBaseName}.txt to your Downloads folder.`,100);
+});
+
+$("downloadPreviewTxtBtn").addEventListener("click",async()=>{
+ if(!lastExtractedText.trim()){alert("No extracted text available to download.");return;}
+ const confirmed=await askPlainTextConfirmation();
+ if(!confirmed) return;
+ saveTextFile(lastExtractedText,lastSourceBaseName+"_extracted");
+});
+
+$("copyTextBtn").addEventListener("click",async()=>{
+ if(!lastExtractedText.trim())return;
+ try{
+  await navigator.clipboard.writeText(lastExtractedText);
+  $("copyTextBtn").textContent="COPIED!";
+  setTimeout(()=>{$("copyTextBtn").textContent="COPY EXTRACTED TEXT";},1500);
+ }catch{
+  alert("Clipboard copy was blocked by the browser. You can select and copy directly from the preview box.");
+ }
+});
+
+// ---------------- TO PDF TOOLS (EXCEL / WORD / IMAGE -> PDF) ----------------
+function sanitizePdfText(str){
+ return String(str||"").replace(/[^\x20-\x7E]/g,"?");
+}
+
+function wrapPdfLine(text,font,size,maxWidth){
+ const clean=sanitizePdfText(text).replace(/\s+/g," ").trim();
+ if(!clean) return [""];
+ const words=clean.split(" ");
+ const lines=[];
+ let current="";
+ for(const w of words){
+  const candidate=current?`${current} ${w}`:w;
+  if(font.widthOfTextAtSize(candidate,size)<=maxWidth){
+   current=candidate;
+  }else{
+   if(current) lines.push(current);
+   if(font.widthOfTextAtSize(w,size)>maxWidth){
+    let chunk="";
+    for(const ch of w){
+     const c2=chunk+ch;
+     if(font.widthOfTextAtSize(c2,size)<=maxWidth) chunk=c2;
+     else{
+      if(chunk) lines.push(chunk);
+      chunk=ch;
+     }
+    }
+    current=chunk;
+   }else{
+    current=w;
+   }
+  }
+ }
+ if(current) lines.push(current);
+ return lines;
+}
+
+// Excel -> PDF
+let excelToPdfFile=null;
+$("excelToPdfFile").addEventListener("change",e=>{
+ excelToPdfFile=e.target.files[0]||null;
+ $("excelToPdfBtn").disabled=!excelToPdfFile;
+ $("excelToPdfStatus").textContent=excelToPdfFile?`Selected: ${excelToPdfFile.name} (${formatBytes(excelToPdfFile.size)})`:"Select an Excel or CSV file to begin.";
+});
+
+$("excelToPdfBtn").addEventListener("click",async()=>{
+ if(!excelToPdfFile) return;
+ $("excelToPdfBtn").disabled=true;
+ const prog=$("excelToPdfProgress");
+ prog.classList.remove("hidden");
+ prog.value=10;
+ try{
+  await ensureSheetJs();
+  await ensurePdfLib();
+  $("excelToPdfStatus").textContent="Reading spreadsheet...";
+  prog.value=35;
+  const buf=await excelToPdfFile.arrayBuffer();
+  const wb=XLSX.read(new Uint8Array(buf),{type:"array"});
+  const {PDFDocument,StandardFonts,rgb}=PDFLib;
+  const doc=await PDFDocument.create();
+  const font=await doc.embedFont(StandardFonts.Helvetica);
+  const boldFont=await doc.embedFont(StandardFonts.HelveticaBold);
+
+  const pageWidth=595.28,pageHeight=841.89,margin=36,fontSize=9,lineHeight=14;
+  const usableWidth=pageWidth-margin*2;
+
+  for(const sheetName of wb.SheetNames){
+   const sheet=wb.Sheets[sheetName];
+   const rows=XLSX.utils.sheet_to_json(sheet,{header:1,defval:""});
+   let page=doc.addPage([pageWidth,pageHeight]);
+   let y=pageHeight-margin;
+   page.drawText(`Sheet: ${sanitizePdfText(sheetName)}`,{x:margin,y,size:12,font:boldFont,color:rgb(0.12,0.3,0.47)});
+   y-=20;
+
+   for(const r of rows){
+    const rowText=(Array.isArray(r)?r:[r]).map(cell=>String(cell??"").trim()).filter(Boolean).join("  |  ");
+    const wrapped=wrapPdfLine(rowText||" ",font,fontSize,usableWidth);
+    for(const line of wrapped){
+     if(y<margin+12){
+      page=doc.addPage([pageWidth,pageHeight]);
+      y=pageHeight-margin;
+     }
+     page.drawText(line,{x:margin,y,size:fontSize,font,color:rgb(0.14,0.2,0.28)});
+     y-=lineHeight;
+    }
+   }
+  }
+
+  prog.value=90;
+  const outBytes=await doc.save();
+  const outName=baseName(excelToPdfFile.name)+"_from_excel.pdf";
+  saveBlob(new Blob([outBytes],{type:"application/pdf"}),outName);
+  prog.value=100;
+  $("excelToPdfStatus").textContent=`Created ${outName} (${doc.getPageCount()} page(s)).`;
+ }catch(e){
+  console.error(e);
+  alert("Excel to PDF failed: "+e.message);
+  $("excelToPdfStatus").textContent="Error: "+e.message;
+ }finally{
+  $("excelToPdfBtn").disabled=!excelToPdfFile;
+ }
+});
+
+// Word (.docx) -> PDF
+let wordToPdfFile=null;
+$("wordToPdfFile").addEventListener("change",e=>{
+ wordToPdfFile=e.target.files[0]||null;
+ $("wordToPdfBtn").disabled=!wordToPdfFile;
+ $("wordToPdfStatus").textContent=wordToPdfFile?`Selected: ${wordToPdfFile.name} (${formatBytes(wordToPdfFile.size)})`:"Select a .docx file to begin.";
+});
+
+function extractDocxParagraphsFromXml(xmlText){
+ const parser=new DOMParser();
+ const xmlDoc=parser.parseFromString(xmlText,"application/xml");
+ const paragraphs=[];
+ const pNodes=[...xmlDoc.getElementsByTagNameNS("*","p")];
+ for(const p of pNodes){
+  const tNodes=[...p.getElementsByTagNameNS("*","t")];
+  const text=tNodes.map(t=>t.textContent||"").join("").trim();
+  if(text) paragraphs.push(text);
+ }
+ return paragraphs;
+}
+
+async function readDocxParagraphs(arrayBuffer){
+ if(typeof DecompressionStream!=="undefined"){
+  // Parse ZIP local/central entries using native DecompressionStream if needed, or fallback
+ }
+ if(window.XLSX){
+  // SheetJS ZIP reader supports zip entries via XLSX.read(..., {type:"array"})
+  const zipWb=XLSX.read(new Uint8Array(arrayBuffer),{type:"array"});
+  const docEntry=zipWb.Sheets && zipWb.Sheets["word/document.xml"];
+  if(docEntry && typeof docEntry==="string"){
+   return extractDocxParagraphsFromXml(docEntry);
+  }
+ }
+ // Fallback raw XML scan if uncompressed or embedded in buffer
+ const decoder=new TextDecoder("utf-8",{fatal:false});
+ const raw=decoder.decode(new Uint8Array(arrayBuffer));
+ const xmlStart=raw.indexOf("<w:document");
+ if(xmlStart>=0){
+  const xmlEnd=raw.indexOf("</w:document>",xmlStart);
+  if(xmlEnd>xmlStart){
+   return extractDocxParagraphsFromXml(raw.slice(xmlStart,xmlEnd+13));
+  }
+ }
+ throw new Error("Could not read text from .docx file.");
+}
+
+$("wordToPdfBtn").addEventListener("click",async()=>{
+ if(!wordToPdfFile) return;
+ $("wordToPdfBtn").disabled=true;
+ const prog=$("wordToPdfProgress");
+ prog.classList.remove("hidden");
+ prog.value=15;
+ try{
+  await ensureSheetJs();
+  await ensurePdfLib();
+  $("wordToPdfStatus").textContent="Extracting text from Word document...";
+  prog.value=45;
+  const buf=await wordToPdfFile.arrayBuffer();
+  const paragraphs=await readDocxParagraphs(buf);
+  const {PDFDocument,StandardFonts,rgb}=PDFLib;
+  const doc=await PDFDocument.create();
+  const font=await doc.embedFont(StandardFonts.Helvetica);
+
+  const pageWidth=595.28,pageHeight=841.89,margin=48,fontSize=11,lineHeight=16;
+  const usableWidth=pageWidth-margin*2;
+  let page=doc.addPage([pageWidth,pageHeight]);
+  let y=pageHeight-margin;
+
+  for(const para of paragraphs){
+   const lines=wrapPdfLine(para,font,fontSize,usableWidth);
+   for(const line of lines){
+    if(y<margin+fontSize){
+     page=doc.addPage([pageWidth,pageHeight]);
+     y=pageHeight-margin;
+    }
+    page.drawText(line,{x:margin,y,size:fontSize,font,color:rgb(0.14,0.2,0.28)});
+    y-=lineHeight;
+   }
+   y-=6;
+  }
+
+  prog.value=90;
+  const outBytes=await doc.save();
+  const outName=baseName(wordToPdfFile.name)+"_from_word.pdf";
+  saveBlob(new Blob([outBytes],{type:"application/pdf"}),outName);
+  prog.value=100;
+  $("wordToPdfStatus").textContent=`Created ${outName} (${doc.getPageCount()} page(s)).`;
+ }catch(e){
+  console.error(e);
+  alert("Word to PDF failed: "+e.message);
+  $("wordToPdfStatus").textContent="Error: "+e.message;
+ }finally{
+  $("wordToPdfBtn").disabled=!wordToPdfFile;
+ }
+});
+
+// Image -> PDF
+let imageToPdfList=[];
+$("imageToPdfFiles").addEventListener("change",e=>{
+ imageToPdfList=[...(e.target.files||[])];
+ $("imageToPdfBtn").disabled=imageToPdfList.length===0;
+ $("imageToPdfStatus").textContent=imageToPdfList.length?`${imageToPdfList.length} image(s) selected.`: "Select one or more images to begin.";
+});
+
+function loadHtmlImage(fileObj){
+ return new Promise((resolve,reject)=>{
+  const url=URL.createObjectURL(fileObj);
+  const img=new Image();
+  img.onload=()=>{URL.revokeObjectURL(url);resolve(img);};
+  img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("Could not read image: "+fileObj.name));};
+  img.src=url;
+ });
+}
+
+$("imageToPdfBtn").addEventListener("click",async()=>{
+ if(!imageToPdfList.length) return;
+ $("imageToPdfBtn").disabled=true;
+ const prog=$("imageToPdfProgress");
+ prog.classList.remove("hidden");
+ prog.value=10;
+ try{
+  await ensurePdfLib();
+  const {PDFDocument}=PDFLib;
+  const doc=await PDFDocument.create();
+
+  for(let i=0;i<imageToPdfList.length;i++){
+   const imgFile=imageToPdfList[i];
+   $("imageToPdfStatus").textContent=`Adding image ${i+1}/${imageToPdfList.length}: ${imgFile.name}...`;
+   prog.value=Math.round((i/imageToPdfList.length)*85)+10;
+
+   const htmlImg=await loadHtmlImage(imgFile);
+   const canvas=document.createElement("canvas");
+   canvas.width=htmlImg.naturalWidth||htmlImg.width;
+   canvas.height=htmlImg.naturalHeight||htmlImg.height;
+   canvas.getContext("2d").drawImage(htmlImg,0,0);
+   const dataUrl=canvas.toDataURL("image/jpeg",0.92);
+   canvas.width=canvas.height=0;
+   const jpgBytes=Uint8Array.from(atob(dataUrl.split(",")[1]),ch=>ch.charCodeAt(0));
+   const embedded=await doc.embedJpg(jpgBytes);
+
+   const page=doc.addPage([canvas.width||595,canvas.height||842]);
+   const {width,height}=page.getSize();
+   page.drawImage(embedded,{x:0,y:0,width,height});
+  }
+
+  prog.value=95;
+  const outBytes=await doc.save();
+  const outName=baseName(imageToPdfList[0].name)+"_images.pdf";
+  saveBlob(new Blob([outBytes],{type:"application/pdf"}),outName);
+  prog.value=100;
+  $("imageToPdfStatus").textContent=`Created ${outName} with ${imageToPdfList.length} page(s).`;
+ }catch(e){
+  console.error(e);
+  alert("Image to PDF failed: "+e.message);
+  $("imageToPdfStatus").textContent="Error: "+e.message;
+ }finally{
+  $("imageToPdfBtn").disabled=imageToPdfList.length===0;
+ }
+});
+
+// ---------------- COMPRESS PDF BY PERCENTAGE ----------------
+$("compressPdfBtn").addEventListener("click",async()=>{
+ if(!file){alert("Please select a PDF file at the top first.");return;}
+ const pct=Number($("compressPercent").value);
+ if(Number.isNaN(pct)||pct<5||pct>90){
+  alert("Enter a valid reduction percentage between 5% and 90%.");
+  return;
+ }
+ $("compressPdfBtn").disabled=true;
+ try{
+  await ensureConversionLibs("txt","text");
+  await ensurePdfLib();
+  const origBytes=file.size;
+  const targetBytes=Math.max(1,Math.round(origBytes*(1-pct/100)));
+  const balance=$("compressQualityMode").value;
+  const keepRatio=1-(pct/100);
+  let scale=1.0,quality=0.72;
+  if(balance==="compact"){
+   scale=Math.max(0.55,Math.min(1.35,0.65+keepRatio*0.65));
+   quality=Math.max(0.28,Math.min(0.75,0.25+keepRatio*0.55));
+  }else if(balance==="sharp"){
+   scale=Math.max(0.85,Math.min(1.8,0.9+keepRatio*0.85));
+   quality=Math.max(0.45,Math.min(0.88,0.42+keepRatio*0.48));
+  }else{
+   scale=Math.max(0.7,Math.min(1.5,0.78+keepRatio*0.72));
+   quality=Math.max(0.35,Math.min(0.82,0.32+keepRatio*0.52));
+  }
+
+  compressStatus(`Opening PDF (target ~${formatBytes(targetBytes)} / -${pct}%)...`,5);
+  const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
+  const {PDFDocument}=PDFLib;
+  const outDoc=await PDFDocument.create();
+
+  for(let i=1;i<=pdf.numPages;i++){
+   compressStatus(`Compressing page ${i}/${pdf.numPages} (target ${formatBytes(targetBytes)})...`,Math.round((i-1)/pdf.numPages*90)+5);
+   const page=await pdf.getPage(i);
+   const baseViewport=page.getViewport({scale:1});
+   const renderViewport=page.getViewport({scale});
+   const canvas=document.createElement("canvas");
+   canvas.width=Math.ceil(renderViewport.width);
+   canvas.height=Math.ceil(renderViewport.height);
+   await page.render({canvasContext:canvas.getContext("2d"),viewport:renderViewport}).promise;
+   const dataUrl=canvas.toDataURL("image/jpeg",quality);
+   canvas.width=canvas.height=0;
+   const jpgBytes=Uint8Array.from(atob(dataUrl.split(",")[1]),ch=>ch.charCodeAt(0));
+   const embeddedImg=await outDoc.embedJpg(jpgBytes);
+   const pdfPage=outDoc.addPage([baseViewport.width,baseViewport.height]);
+   pdfPage.drawImage(embeddedImg,{x:0,y:0,width:baseViewport.width,height:baseViewport.height});
+  }
+
+  compressStatus("Building compressed PDF...",96);
+  const outBytes=await outDoc.save({useObjectStreams:true});
+  const actualBytes=outBytes.byteLength;
+  const actualReductionPct=origBytes>0?(((origBytes-actualBytes)/origBytes)*100).toFixed(1):"0.0";
+  const outName=`${baseName(file.name)}_compressed_${pct}pct.pdf`;
+  saveBlob(new Blob([outBytes],{type:"application/pdf"}),outName);
+
+  $("actualSizeDisplay").textContent=`${formatBytes(actualBytes)} (-${actualReductionPct}%)`;
+  compressStatus(
+   `Saved ${outName} · Original: ${formatBytes(origBytes)} · Estimated target (${pct}%): ${formatBytes(targetBytes)} · Actual size: ${formatBytes(actualBytes)} (${actualReductionPct}% smaller).`,
+   100
+  );
+ }catch(e){
+  console.error(e);
+  alert("Compression failed: "+e.message);
+  compressStatus("Compression failed: "+e.message,0);
+ }finally{
+  updateCompressionSizePreview();
+ }
+});
+
+// ---------------- MERGE MULTIPLE PDFs ----------------
+function updateMergeButtons(){
+ $("mergePdfsBtn").disabled=mergeQueue.length<2;
+ $("clearMergeBtn").disabled=mergeQueue.length===0;
+}
+
+function renderMergeQueue(){
+ const list=$("mergeQueue");
+ list.innerHTML="";
+ mergeQueue.forEach((f,idx)=>{
+  const li=document.createElement("li");
+  li.className="merge-item";
+  const title=document.createElement("span");
+  title.textContent=`${idx+1}. ${f.name} (${formatBytes(f.size)})`;
+  const btns=document.createElement("div");
+  btns.className="merge-btns";
+  const up=document.createElement("button");
+  up.type="button";up.textContent="↑";up.className="secondary small";up.disabled=idx===0;
+  up.onclick=()=>{[mergeQueue[idx-1],mergeQueue[idx]]=[mergeQueue[idx],mergeQueue[idx-1]];renderMergeQueue();};
+  const down=document.createElement("button");
+  down.type="button";down.textContent="↓";down.className="secondary small";down.disabled=idx===mergeQueue.length-1;
+  down.onclick=()=>{[mergeQueue[idx+1],mergeQueue[idx]]=[mergeQueue[idx],mergeQueue[idx+1]];renderMergeQueue();};
+  const rem=document.createElement("button");
+  rem.type="button";rem.textContent="Remove";rem.className="secondary small";
+  rem.onclick=()=>{mergeQueue.splice(idx,1);renderMergeQueue();mergeMessage(mergeQueue.length?`${mergeQueue.length} file(s) in merge queue.`:"Merge queue is empty.");};
+  btns.append(up,down,rem);
+  li.append(title,btns);
+  list.append(li);
+ });
+ updateMergeButtons();
+}
+
+$("mergeFiles").addEventListener("change",e=>{
+ const picked=[...(e.target.files||[])];
+ if(!picked.length)return;
+ mergeQueue.push(...picked);
+ e.target.value="";
+ renderMergeQueue();
+ mergeMessage(`${mergeQueue.length} PDF file(s) ready in queue. Add at least 2 files to merge.`);
+});
+
+$("clearMergeBtn").addEventListener("click",()=>{
+ mergeQueue=[];
+ $("mergeFiles").value="";
+ renderMergeQueue();
+ mergeMessage("Merge queue cleared.");
+});
+
+$("mergePdfsBtn").addEventListener("click",async()=>{
+ if(mergeQueue.length<2){alert("Select at least 2 PDF files to merge.");return;}
+ $("mergePdfsBtn").disabled=true;
+ try{
+  await ensurePdfLib();
+  const {PDFDocument}=PDFLib;
+  const merged=await PDFDocument.create();
+  let totalPages=0;
+  for(let i=0;i<mergeQueue.length;i++){
+   const f=mergeQueue[i];
+   mergeMessage(`Merging file ${i+1}/${mergeQueue.length}: ${f.name}...`);
+   const bytes=await f.arrayBuffer();
+   const src=await PDFDocument.load(bytes);
+   const indices=src.getPageIndices();
+   const copied=await merged.copyPages(src,indices);
+   copied.forEach(p=>merged.addPage(p));
+   totalPages+=indices.length;
+  }
+  const outBytes=await merged.save();
+  const outName=baseName(mergeQueue[0].name)+"_merged.pdf";
+  saveBlob(new Blob([outBytes],{type:"application/pdf"}),outName);
+  mergeMessage(`Merged ${mergeQueue.length} PDFs (${totalPages} total pages) into ${outName}.`);
+ }catch(e){
+  alert("Merge failed: "+e.message);
+  mergeMessage("Merge error: "+e.message);
+ }finally{
+  updateMergeButtons();
+ }
+});
+
+// ---------------- PDF PAGE MANAGER ----------------
+function pageManagerParsePages(input,total){
+ const result=new Set();
+ const parts=input.split(",").map(x=>x.trim()).filter(Boolean);
+ if(!parts.length) throw new Error("Enter at least one page number.");
+ for(const part of parts){
+  const m=part.match(/^(\d+)\s*-\s*(\d+)$/);
+  if(m){
+   const a=Number(m[1]),b=Number(m[2]);
+   if(a<1||b<a||b>total) throw new Error(`Invalid page range: ${part}. Working set has ${total} pages.`);
+   for(let n=a;n<=b;n++)result.add(n-1);
+  }else if(/^\d+$/.test(part)){
+   const n=Number(part);
+   if(n<1||n>total)throw new Error(`Page ${n} is outside the working set (${total} pages).`);
+   result.add(n-1);
+  }else throw new Error(`Invalid page entry: ${part}. Use formats such as 1, 3, 5-7.`);
+ }
+ return [...result];
+}
+
+async function ensurePdfLoadedForTools(){
+ if(!file) throw new Error("Please select a PDF file at the top first.");
+ await ensureConversionLibs("txt","text");
+ if(!pageManagerPdfBytes){
+  pageManagerPdfBytes=await file.arrayBuffer();
+ }
+ if(!pdfJsDoc){
+  pdfJsDoc=await pdfjsLib.getDocument({data:new Uint8Array(pageManagerPdfBytes.slice(0))}).promise;
+ }
+ if(!pageManagerPages.length){
+  pageManagerPages=Array.from({length:pdfJsDoc.numPages},(_,i)=>i);
+  pageManagerRotations={};
+  pageManagerSelected=new Set(pageManagerPages);
+ }
+ return pdfJsDoc;
+}
+
+async function pageManagerLoad(){
+ if(!file){alert("Please select a PDF file at the top first.");return;}
+ try{
+  pageManagerMessage("Loading PDF pages...");
+  await ensurePdfLoadedForTools();
+  pageManagerPages=Array.from({length:pdfJsDoc.numPages},(_,i)=>i);
+  pageManagerRotations={};
+  pageManagerSelected=new Set(pageManagerPages);
+  await pageManagerRenderThumbs();
+  const msg=`${pdfJsDoc.numPages} pages loaded. All pages are selected initially.`;
+  pageManagerMessage(msg);
+  deletePagesMessage(msg);
+ }catch(e){pageManagerMessage("Could not load PDF pages: "+e.message);}
+}
+
+async function pageManagerRenderThumbs(){
+ if(!pdfJsDoc)return;
+ const host=$("pageThumbs");host.innerHTML="";
+ for(let position=0;position<pageManagerPages.length;position++){
+  const originalIndex=pageManagerPages[position];
+  const rot=pageManagerRotations[originalIndex]||0;
+  const page=await pdfJsDoc.getPage(originalIndex+1);
+  const viewport=page.getViewport({scale:.42,rotation:rot});
+  const canvas=document.createElement("canvas");
+  canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);
+  await page.render({canvasContext:canvas.getContext("2d"),viewport}).promise;
+  const card=document.createElement("div");card.className="page-thumb";
+  const top=document.createElement("div");top.className="page-meta";
+  const label=document.createElement("label");label.style.margin="0";label.style.fontWeight="bold";
+  const check=document.createElement("input");check.type="checkbox";check.checked=pageManagerSelected.has(originalIndex);
+  check.addEventListener("change",()=>{if(check.checked)pageManagerSelected.add(originalIndex);else pageManagerSelected.delete(originalIndex);});
+  label.append(check,document.createTextNode(" Keep"));
+  const num=document.createElement("span");num.textContent=`#${position+1} (P.${originalIndex+1}${rot?` · ${rot}°`:""})`;
+  top.append(label,num);card.append(top,canvas);
+  const actions=document.createElement("div");actions.className="actions";
+  const previewBtn=document.createElement("button");previewBtn.type="button";previewBtn.textContent="PREVIEW";previewBtn.className="secondary";
+  previewBtn.onclick=()=>pageManagerPreview(originalIndex);
+  const up=document.createElement("button");up.type="button";up.textContent="↑";up.title="Move page up";up.className="secondary";up.disabled=position===0;
+  up.onclick=()=>pageManagerMove(position,-1);
+  const down=document.createElement("button");down.type="button";down.textContent="↓";down.title="Move page down";down.className="secondary";down.disabled=position===pageManagerPages.length-1;
+  down.onclick=()=>pageManagerMove(position,1);
+  actions.append(previewBtn,up,down);card.append(actions);host.append(card);
+ }
+}
+
+async function pageManagerPreview(originalIndex){
+ try{
+  const doc=await ensurePdfLoadedForTools();
+  const rot=pageManagerRotations[originalIndex]||0;
+  const page=await doc.getPage(originalIndex+1),v=page.getViewport({scale:1.35,rotation:rot});
+  const c=$("largePagePreview");c.width=Math.ceil(v.width);c.height=Math.ceil(v.height);
+  await page.render({canvasContext:c.getContext("2d"),viewport:v}).promise;
+  $("previewPageTitle").textContent=`Preview – Original PDF Page ${originalIndex+1}${rot?` (${rot}°)`:""}`;
+  $("pagePreviewModal").classList.remove("hidden");
+ }catch(e){alert("Preview failed: "+e.message);}
+}
+
+function pageManagerMove(position,delta){
+ const target=position+delta;if(target<0||target>=pageManagerPages.length)return;
+ [pageManagerPages[position],pageManagerPages[target]]=[pageManagerPages[target],pageManagerPages[position]];
+ pageManagerRenderThumbs();
+}
+
+async function buildWorkingPdfDoc(indices){
+ await ensurePdfLib();
+ if(!pageManagerPdfBytes) throw new Error("Load PDF pages for preview first.");
+ if(!indices.length) throw new Error("No pages selected.");
+ const {PDFDocument,degrees}=PDFLib;
+ const source=await PDFDocument.load(pageManagerPdfBytes);
+ const output=await PDFDocument.create();
+ const copied=await output.copyPages(source,indices);
+ copied.forEach((page,idx)=>{
+  const origIdx=indices[idx];
+  const extraRot=pageManagerRotations[origIdx]||0;
+  const currentRot=page.getRotation().angle||0;
+  if(extraRot){
+   page.setRotation(degrees((currentRot+extraRot)%360));
+  }
+  output.addPage(page);
+ });
+ return output;
+}
+
+async function pageManagerSave(indices,suffix){
+ try{
+  const output=await buildWorkingPdfDoc(indices);
+  const bytes=await output.save();
+  saveBlob(new Blob([bytes],{type:"application/pdf"}),baseName(file.name)+suffix+".pdf");
+  const msg=`Created PDF with ${indices.length} page(s).`;
+  pageManagerMessage(msg);
+  splitMessage(msg);
+  deletePagesMessage(msg);
+ }catch(e){alert("Could not create PDF: "+e.message);}
+}
+
+$("loadPagesBtn").addEventListener("click",pageManagerLoad);
+$("keepSelectedBtn").addEventListener("click",()=>{
+ if(!pageManagerPages.length){alert("Load PDF pages for preview first.");return;}
+ pageManagerPages=pageManagerPages.filter(i=>pageManagerSelected.has(i));
+ pageManagerSelected=new Set(pageManagerPages);
+ pageManagerRenderThumbs();
+ const msg=`${pageManagerPages.length} page(s) retained in the working PDF order.`;
+ deletePagesMessage(msg);
+ pageManagerMessage(msg);
+});
+$("deleteSelectedBtn").addEventListener("click",()=>{
+ if(!pageManagerPages.length){alert("Load PDF pages for preview first.");return;}
+ const kept=pageManagerPages.filter(i=>!pageManagerSelected.has(i));
+ if(!kept.length){alert("You cannot delete every page. Keep at least one page.");return;}
+ pageManagerPages=kept;pageManagerSelected=new Set(kept);
+ pageManagerRenderThumbs();
+ const msg=`${pageManagerPages.length} page(s) remain. Deleted pages will not be included in the processed PDF.`;
+ deletePagesMessage(msg);
+ pageManagerMessage(msg);
+});
+$("downloadReorderedBtn").addEventListener("click",()=>pageManagerSave(pageManagerPages,"_rearranged_processed"));
+$("splitSelectedBtn").addEventListener("click",()=>{
+ try{
+  if(!pageManagerPages.length){alert("Load PDF pages for preview first.");return;}
+  const indexes=pageManagerParsePages($("pageNumbers").value,pageManagerPages.length);
+  const selected=indexes.map(i=>pageManagerPages[i]).filter(i=>i!==undefined);
+  pageManagerSave(selected,"_selected_pages");
+ }catch(e){alert(e.message);splitMessage("Error: "+e.message);}
+});
+$("splitRangeBtn").addEventListener("click",()=>{
+ if(!pageManagerPages.length){alert("Load PDF pages for preview first.");return;}
+ const a=Number($("rangeFrom").value),b=Number($("rangeTo").value);
+ if(!a||!b||a<1||b<a||b>pageManagerPages.length){alert(`Enter a valid range between page 1 and ${pageManagerPages.length}.`);return;}
+ pageManagerSave(pageManagerPages.slice(a-1,b),`_pages_${a}_to_${b}`);
+});
+
+// ---------------- EDIT PDF TOOLS ----------------
+$("applyRotateBtn").addEventListener("click",async()=>{
+ try{
+  await ensurePdfLoadedForTools();
+  const scope=$("rotateScope").value;
+  const angle=Number($("rotateAngle").value);
+  let targetPositions=[];
+  if(scope==="all"){
+   targetPositions=pageManagerPages.map((_,idx)=>idx);
+  }else if(scope==="selected"){
+   targetPositions=pageManagerPages.map((origIdx,idx)=>pageManagerSelected.has(origIdx)?idx:-1).filter(idx=>idx>=0);
+  }else{
+   targetPositions=pageManagerParsePages($("rotatePagesInput").value,pageManagerPages.length);
+  }
+  if(!targetPositions.length) throw new Error("No pages matched the rotation selection.");
+  targetPositions.forEach(pos=>{
+   const origIdx=pageManagerPages[pos];
+   pageManagerRotations[origIdx]=((pageManagerRotations[origIdx]||0)+angle)%360;
+  });
+  await pageManagerRenderThumbs();
+  const output=await buildWorkingPdfDoc(pageManagerPages);
+  const bytes=await output.save();
+  saveBlob(new Blob([bytes],{type:"application/pdf"}),baseName(file.name)+`_rotated_${angle}.pdf`);
+  const msg=`Rotated ${targetPositions.length} page(s) by ${angle}° and downloaded PDF.`;
+  rotateMessage(msg);
+  editPdfMessage(msg);
+ }catch(e){alert("Rotation failed: "+e.message);rotateMessage("Error: "+e.message);editPdfMessage("Error: "+e.message);}
+});
+
+$("applyStampBtn").addEventListener("click",async()=>{
+ try{
+  await ensurePdfLoadedForTools();
+  await ensurePdfLib();
+  const text=$("stampText").value.trim();
+  if(!text) throw new Error("Enter text to stamp onto the PDF.");
+  const pos=$("stampPosition").value;
+  const size=Math.max(6,Math.min(120,Number($("stampSize").value)||14));
+  const output=await buildWorkingPdfDoc(pageManagerPages);
+  const {StandardFonts,rgb,degrees}=PDFLib;
+  const font=await output.embedFont(StandardFonts.HelveticaBold);
+  output.getPages().forEach(page=>{
+   const {width,height}=page.getSize();
+   const textWidth=font.widthOfTextAtSize(text,size);
+   if(pos==="center"){
+    const wmSize=Math.max(size,36);
+    const wmWidth=font.widthOfTextAtSize(text,wmSize);
+    page.drawText(text,{
+     x:Math.max(20,(width-wmWidth*0.7)/2),
+     y:height/2,
+     size:wmSize,
+     font,
+     color:rgb(0.65,0.65,0.65),
+     opacity:0.35,
+     rotate:degrees(35)
+    });
+   }else{
+    let x=24,y=height-28;
+    if(pos==="top-right") x=Math.max(24,width-textWidth-24);
+    if(pos==="bottom-left") y=22;
+    if(pos==="bottom-right"){x=Math.max(24,width-textWidth-24);y=22;}
+    page.drawText(text,{x,y,size,font,color:rgb(0.12,0.22,0.38)});
+   }
+  });
+  const bytes=await output.save();
+  saveBlob(new Blob([bytes],{type:"application/pdf"}),baseName(file.name)+"_stamped.pdf");
+  editPdfMessage(`Added "${text}" (${pos}) across ${pageManagerPages.length} page(s) and downloaded PDF.`);
+ }catch(e){alert("Could not apply text: "+e.message);editPdfMessage("Error: "+e.message);}
+});
+
+$("addPageNumbersBtn").addEventListener("click",async()=>{
+ try{
+  await ensurePdfLoadedForTools();
+  await ensurePdfLib();
+  const pos=$("pageNumPos").value;
+  const output=await buildWorkingPdfDoc(pageManagerPages);
+  const {StandardFonts,rgb}=PDFLib;
+  const font=await output.embedFont(StandardFonts.Helvetica);
+  const pages=output.getPages();
+  const total=pages.length;
+  pages.forEach((page,i)=>{
+   const label=`Page ${i+1} of ${total}`;
+   const size=10;
+   const w=font.widthOfTextAtSize(label,size);
+   const {width,height}=page.getSize();
+   let x=(width-w)/2,y=18;
+   if(pos==="bottom-right") x=Math.max(20,width-w-24);
+   if(pos==="bottom-left") x=24;
+   if(pos==="top-right"){x=Math.max(20,width-w-24);y=height-24;}
+   page.drawText(label,{x,y,size,font,color:rgb(0.3,0.35,0.42)});
+  });
+  const bytes=await output.save();
+  saveBlob(new Blob([bytes],{type:"application/pdf"}),baseName(file.name)+"_numbered.pdf");
+  editPdfMessage(`Added page numbers (${pos}) to ${total} page(s) and downloaded PDF.`);
+ }catch(e){alert("Could not add page numbers: "+e.message);editPdfMessage("Error: "+e.message);}
+});
+
+$("insertBlankBtn").addEventListener("click",async()=>{
+ try{
+  await ensurePdfLoadedForTools();
+  await ensurePdfLib();
+  const after=Number($("blankAfterPage").value);
+  if(Number.isNaN(after)||after<0||after>pageManagerPages.length){
+   throw new Error(`Enter a page number between 0 and ${pageManagerPages.length}.`);
+  }
+  const output=await buildWorkingPdfDoc(pageManagerPages);
+  const pages=output.getPages();
+  const refPage=pages[Math.max(0,Math.min(pages.length-1,after?after-1:0))];
+  const {width,height}=refPage.getSize();
+  output.insertPage(after,[width,height]);
+  const bytes=await output.save();
+  saveBlob(new Blob([bytes],{type:"application/pdf"}),baseName(file.name)+"_with_blank.pdf");
+  editPdfMessage(`Inserted a blank page ${after===0?"at the start":`after page ${after}`} and downloaded PDF.`);
+ }catch(e){alert("Could not insert blank page: "+e.message);editPdfMessage("Error: "+e.message);}
+});
+})();
+</script>
+</body>
+</html>
